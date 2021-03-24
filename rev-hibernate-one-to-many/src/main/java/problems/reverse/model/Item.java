@@ -1,18 +1,9 @@
 package problems.reverse.model;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "ITEM")
 public class Item {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
 	private long id;
 
-	@ManyToOne
-	@JoinColumn(name = "cart_id", nullable = false)
 	private Cart cart;
 
 	public Cart getCart() {
