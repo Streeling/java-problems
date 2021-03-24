@@ -1,4 +1,4 @@
-package problem.reverse.model;
+package problems.reverse.model;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -9,11 +9,11 @@ public class Cart {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "cart_id")
+	@Column(name = "id")
 	private long id;
 
 	@OneToMany(mappedBy = "cart")
-	private Set<Items> items;
+	private Set<Item> items;
 
 	public long getId() {
 		return id;
@@ -23,11 +23,11 @@ public class Cart {
 		this.id = id;
 	}
 
-	public Set<Items> getItems() {
+	public Set<Item> getItems() {
 		return items;
 	}
 
-	public void setItems(Set<Items> items) {
+	public void setItems(Set<Item> items) {
 		this.items = items;
 	}
 }

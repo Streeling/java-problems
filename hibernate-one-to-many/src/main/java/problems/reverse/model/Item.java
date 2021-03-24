@@ -1,10 +1,10 @@
-package problem.reverse.model;
+package problems.reverse.model;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ITEMS")
-public class Items {
+@Table(name = "ITEM")
+public class Item {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,10 +17,10 @@ public class Items {
 	private Cart cart;
 
 	// Hibernate requires no-args constructor
-	public Items() {
+	public Item() {
 	}
 
-	public Items(Cart c) {
+	public Item(Cart c) {
 		this.cart = c;
 	}
 
