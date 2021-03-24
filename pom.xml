@@ -10,7 +10,7 @@
 	<version>1.0-SNAPSHOT</version>
 	<modules>
 		<module>inspired-by-jhipster</module>
-		<module>hibernate-one-to-many</module>
+		<module>rev-hibernate-one-to-many</module>
 	</modules>
 
 	<properties>
