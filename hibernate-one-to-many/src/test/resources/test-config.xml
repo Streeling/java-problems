@@ -8,17 +8,17 @@
 
   <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
     <property name="driverClassName" value="org.h2.Driver"/>
-    <property name="url" value="jdbc:h2:mem:testdb"/>
+    <property name="url" value="jdbc:h2:mem:javaproblems;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"/>
     <property name="username" value="sa"/>
     <property name="password" value=""/>
   </bean>
 
-  <jdbc:initialize-database data-source="dataSource">
+  <jdbc:initialize-database>
     <jdbc:script location="classpath:sql/db-schema.sql"/>
   </jdbc:initialize-database>
 
   <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-    <property name="packagesToScan" value="problem.reverse.model"/>
+    <property name="packagesToScan" value="problems.reverse.model"/>
     <property name="dataSource" ref="dataSource"/>
     <property name="jpaVendorAdapter">
       <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">

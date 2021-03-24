@@ -11,18 +11,9 @@ public class Item {
 	@Column(name = "id")
 	private long id;
 
-
 	@ManyToOne
 	@JoinColumn(name = "cart_id", nullable = false)
 	private Cart cart;
-
-	// Hibernate requires no-args constructor
-	public Item() {
-	}
-
-	public Item(Cart c) {
-		this.cart = c;
-	}
 
 	public Cart getCart() {
 		return cart;
