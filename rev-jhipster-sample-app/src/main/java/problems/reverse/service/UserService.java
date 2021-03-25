@@ -5,15 +5,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.extern.log4j.Log4j2;
-import problems.reverse.repository.UserRepository;
-import problems.reverse.domain.User;
-import problems.reverse.security.RandomUtil;
-
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.Optional;
+
+import lombok.extern.log4j.Log4j2;
+import problems.reverse.domain.User;
+import problems.reverse.repository.UserRepository;
 
 @Log4j2
 @Transactional
@@ -32,33 +29,12 @@ public class UserService {
 	}
 
 	public Optional<User> requestPasswordReset(String mail) {
-		return userRepository
-				.findOneByEmailIgnoreCase(mail)
-				.filter(User::isActivated)
-				.map(
-						user -> {
-							user.setResetKey(RandomUtil.generateResetKey());
-							user.setResetDate(Instant.now());
-							this.clearUserCaches(user);
-							return user;
-						}
-				);
+		return Optional.empty(); // Should be implemented
 	}
 
 	public Optional<User> completePasswordReset(String newPassword, String key) {
 		log.debug("Reset user password for reset key {}", key);
-		return userRepository
-				.findOneByResetKey(key)
-				.filter(user -> user.getResetDate().isAfter(Instant.now().minusSeconds(86400)))
-				.map(
-						user -> {
-							user.setPassword(passwordEncoder.encode(newPassword));
-							user.setResetKey(null);
-							user.setResetDate(null);
-							this.clearUserCaches(user);
-							return user;
-						}
-				);
+		return Optional.empty(); // Should be implemented
 	}
 
 	/**
@@ -68,15 +44,7 @@ public class UserService {
 	 */
 	@Scheduled(cron = "0 0 1 * * ?")
 	public void removeNotActivatedUsers() {
-		userRepository
-				.findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(Instant.now().minus(3, ChronoUnit.DAYS))
-				.forEach(
-						user -> {
-							log.debug("Deleting not activated user {}", user.getLogin());
-							userRepository.delete(user);
-							this.clearUserCaches(user);
-						}
-				);
+		// Should be implemented
 	}
 
 	private void clearUserCaches(User user) {
