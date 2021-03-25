@@ -1,5 +1,7 @@
 package problems.reverse.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+
 import lombok.Data;
 
 import javax.persistence.*;
@@ -11,7 +13,7 @@ import java.time.Instant;
 @Data
 @Entity
 @Table(name = "jhi_user")
-public class User {
+public class User extends AbstractAuditingEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,5 +51,4 @@ public class User {
 
 	@Column(name = "reset_date")
 	private Instant resetDate = null;
-
 }

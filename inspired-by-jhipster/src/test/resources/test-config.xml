@@ -1,13 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			 xsi:schemaLocation="http://www.springframework.org/schema/beans
-        https://www.springframework.org/schema/beans/spring-beans.xsd">
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx https://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+        http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
-	<bean id="userDao" class="problems.reverse.dao.UserDao"/>
+  <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <property name="driverClassName" value="org.h2.Driver"/>
+    <property name="url" value="jdbc:h2:mem:javaproblems;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"/>
+    <property name="username" value="sa"/>
+    <property name="password" value=""/>
+  </bean>
 
-	<bean id="userService" class="problems.reverse.service.UserService">
-		<constructor-arg ref="userDao"/>
-	</bean>
+  <jdbc:initialize-database>
+    <jdbc:script location="classpath:sql/db-schema.sql"/>
+  </jdbc:initialize-database>
+
+  <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+    <property name="packagesToScan" value="problems.reverse.domain"/>
+    <property name="dataSource" ref="dataSource"/>
+    <property name="jpaVendorAdapter">
+      <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="generateDdl" value="false"/>
+      </bean>
+    </property>
+  </bean>
+
+  <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+    <property name="entityManagerFactory" ref="entityManagerFactory"/>
+  </bean>
+
+  <tx:annotation-driven/>
+
+  <jpa:repositories base-package="problems.reverse.repository"/>
+
+  <cache:annotation-driven />
+
+  <bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
+    <property name="caches">
+      <set>
+        <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="usersByLogin"/>
+        <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="usersByEmail"/>
+      </set>
+    </property>
+  </bean>
+
+  <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+  <bean id="springSecurityAuditorAware" class="problems.reverse.security.SpringSecurityAuditorAware"/>
+
+  <jpa:auditing auditor-aware-ref="springSecurityAuditorAware"/>
+
+  <bean id="userService" class="problems.reverse.service.UserService">
+    <constructor-arg ref="userRepository"/>
+    <constructor-arg ref="cacheManager"/>
+    <constructor-arg ref="passwordEncoder"/>
+  </bean>
+
+  <bean id="dateTimeProvider" class="org.mockito.Mockito" factory-method="mock">
+    <constructor-arg value="org.springframework.data.auditing.DateTimeProvider"/>
+  </bean>
 
 </beans>
